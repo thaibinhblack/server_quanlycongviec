@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DateTime;
 use DB;
-use PDO;
 class CongViecController extends Controller
 {
+    
     public function CallFunction($P_ID_CV_DA,
+                $P_ID_DU_AN_KH,
                 $P_TEN_CV ,
                 $P_NOI_DUNG_CV ,
                 $P_NGAY_TIEP_NHAN ,
@@ -34,6 +35,7 @@ class CongViecController extends Controller
     {
      $sql = "DECLARE
         P_ID_CV_DA NUMBER;
+        P_ID_DU_AN_KH NUMBER;
         P_TEN_CV VARCHAR2(255);
         P_NOI_DUNG_CV VARCHAR2(255);
         P_NGAY_TIEP_NHAN DATE;
@@ -55,14 +57,16 @@ class CongViecController extends Controller
         P_ACTION NUMBER;
         P_TYPE NUMBER;
         P_NGUOI_NHAP VARCHAR2(100);
+        RESULT_CV OUT NUMBER(10);
     BEGIN
-       :RESULT_CV := THEM_CAPNHAT_CONGVIEC(:P_ID_CV_DA, :P_TEN_CV, :P_NOI_DUNG_CV, :P_NGAY_TIEP_NHAN,:P_NGAY_HOAN_THANH, :P_NGAY_CAM_KET, :P_GIO_THUC_HIEN, :P_DO_UU_TIEN, 
+       THEM_CAPNHAT_CONGVIEC(:P_ID_CV_DA, :P_ID_DU_AN_KH, :P_TEN_CV, :P_NOI_DUNG_CV, :P_NGAY_TIEP_NHAN,:P_NGAY_HOAN_THANH, :P_NGAY_CAM_KET, :P_GIO_THUC_HIEN, :P_DO_UU_TIEN, 
     :P_MA_JIRA, :P_NGUOI_GIAO_VIEC, :P_NGUOI_NHAN_VIEC, :P_TIEN_DO, :P_GHI_CHU, :P_LY_DO, :P_THAM_DINH_TGIAN, :P_THAM_DINH_KHOI_LUONG, :P_THAM_DINH_CHAT_LUONG, :P_ID_LOAI_CV, 
-    :P_TRANG_THAI, :P_ACTION, :P_TYPE, :P_NGUOI_NHAP);
+    :P_TRANG_THAI, :P_ACTION, :P_TYPE, :P_NGUOI_NHAP, :RESULT_CV);
     END;";  
     $pdo = DB::getPdo();
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':P_ID_CV_DA',$P_ID_CV_DA);
+    $stmt->bindParam(':P_ID_DU_AN_KH',$P_ID_CV_DA);
     $stmt->bindParam(':P_TEN_CV',$P_TEN_CV);
     $stmt->bindParam(':P_NOI_DUNG_CV',$P_NOI_DUNG_CV);
     $stmt->bindParam(':P_NGAY_TIEP_NHAN',$P_NGAY_TIEP_NHAN);
@@ -84,7 +88,7 @@ class CongViecController extends Controller
     $stmt->bindParam(':P_ACTION',$P_ACTION);
     $stmt->bindParam(':P_TYPE',$P_TYPE);
     $stmt->bindParam(':P_NGUOI_NHAP',$P_NGUOI_NHAP);
-    $stmt->bindParam(':RESULT_CV',$result, PDO::PARAM_INT);
+    $stmt->bindParam(':RESULT_CV',$result);
     $stmt->execute();
     return $result;
     }
@@ -130,7 +134,7 @@ class CongViecController extends Controller
             if($request->has('api_token'))
             {
                 $P_ID_CV_DA = $request->get('P_ACTION') == 1 ? 0 : $request->get('P_ID_CV_DA');
-                // $P_ID_DU_AN_KH = $request->get("P_ID_DU_AN_KH");
+                $P_ID_DU_AN_KH = $request->get("P_ID_DU_AN_KH");
                 $P_TEN_CV = $request->get('P_TEN_CV');
                 $P_NGAY_TIEP_NHAN = $request->get('P_NGAY_TIEP_NHAN');
                 $P_NGAY_HOAN_THANH = $request->get('P_NGAY_HOAN_THANH');
@@ -153,6 +157,7 @@ class CongViecController extends Controller
                 $P_ACTION = $request->get('P_ACTION');
                 $P_NGUOI_NHAP = $request->get('P_NGUOI_NHAP');
                 $result = $this->CallFunction($P_ID_CV_DA,
+                $P_ID_DU_AN_KH,
                 $P_TEN_CV ,
                 $P_NOI_DUNG_CV ,
                 $P_NGAY_TIEP_NHAN ,
@@ -327,8 +332,8 @@ class CongViecController extends Controller
     public function chitiet(Request $request)
     {
         $sql = "DECLARE
-            P_ID_DU_AN_KH number;
-            P_ID_CV_DA number;
+            P_ID_DU_AN_KH number(10);
+            P_ID_CV_DA number(10);
             P_ACTION number(1);
         BEGIN
             :result := THEM_CAPNHAT_CVDA(:P_ID_DU_AN_KH,:P_ID_CV_DA,:P_ACTION);
@@ -340,8 +345,8 @@ class CongViecController extends Controller
         foreach ($array as $value) {
             $pdo = DB::getPdo();
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':P_ID_DU_AN_KH',$value,PDO::PARAM_INT);
-            $stmt->bindParam(':P_ID_CV_DA',$P_ID_CV_DA,PDO::PARAM_INT);
+            $stmt->bindParam(':P_ID_DU_AN_KH',$value);
+            $stmt->bindParam(':P_ID_CV_DA',$P_ID_CV_DA);
             $stmt->bindParam(':P_ACTION',$P_ACTION);
             $stmt->bindParam(':result',$result);
             $stmt->execute();

@@ -84,7 +84,7 @@ class CongViecController extends Controller
     $stmt->bindParam(':P_ACTION',$P_ACTION);
     $stmt->bindParam(':P_TYPE',$P_TYPE);
     $stmt->bindParam(':P_NGUOI_NHAP',$P_NGUOI_NHAP);
-    $stmt->bindParam(':RESULT_CV',$result, PDO::PARAM_INT);
+    $stmt->bindParam(':RESULT_CV',$result);
     $stmt->execute();
     return $result;
     }
@@ -327,8 +327,8 @@ class CongViecController extends Controller
     public function chitiet(Request $request)
     {
         $sql = "DECLARE
-            P_ID_DU_AN_KH number;
-            P_ID_CV_DA number;
+            P_ID_DU_AN_KH number(10);
+            P_ID_CV_DA number(10);
             P_ACTION number(1);
         BEGIN
             :result := THEM_CAPNHAT_CVDA(:P_ID_DU_AN_KH,:P_ID_CV_DA,:P_ACTION);
@@ -340,8 +340,8 @@ class CongViecController extends Controller
         foreach ($array as $value) {
             $pdo = DB::getPdo();
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':P_ID_DU_AN_KH',$value,PDO::PARAM_INT);
-            $stmt->bindParam(':P_ID_CV_DA',$P_ID_CV_DA,PDO::PARAM_INT);
+            $stmt->bindParam(':P_ID_DU_AN_KH',$value);
+            $stmt->bindParam(':P_ID_CV_DA',$P_ID_CV_DA);
             $stmt->bindParam(':P_ACTION',$P_ACTION);
             $stmt->bindParam(':result',$result);
             $stmt->execute();

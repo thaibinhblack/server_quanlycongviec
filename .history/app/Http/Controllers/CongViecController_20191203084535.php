@@ -340,8 +340,8 @@ class CongViecController extends Controller
         foreach ($array as $value) {
             $pdo = DB::getPdo();
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':P_ID_DU_AN_KH',$value,PDO::PARAM_INT);
-            $stmt->bindParam(':P_ID_CV_DA',$P_ID_CV_DA,PDO::PARAM_INT);
+            $stmt->bindParam(':P_ID_DU_AN_KH',$value);
+            $stmt->bindParam(':P_ID_CV_DA',$P_ID_CV_DA);
             $stmt->bindParam(':P_ACTION',$P_ACTION);
             $stmt->bindParam(':result',$result);
             $stmt->execute();
